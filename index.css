@@ -77,13 +77,19 @@ h1{
     font-size: 24px;
     border-radius: 1rem;
     text-decoration: none;
-    width: 28%;
+    width: 9rem;
     margin: 5% 2.6%;
     transition: all 0.5s;
 }
+/* Media query per dispositivi con larghezza max 600px (es. cellulari) */
+@media (max-width: 600px) {
+    #createBtn, .set {
+        width: 100%;    /* larghezza piena su cellulare */
+    }
+}
 
 #createBtn{
-    margin-top: 20px;
+    margin: 5% 2.6%;
     padding: 6rem 2rem;
     background-color: darkgoldenrod ;
     border: 1px solid white;

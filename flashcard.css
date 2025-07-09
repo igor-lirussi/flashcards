@@ -91,6 +91,11 @@ nav{
     width: 600px;
     height: 600px;
 }
+@media (max-width: 600px) {
+    #FC-container {
+        width: 100%; /* full width on small screens */
+    }
+}
 #FC{
     position: absolute;
     width: 100%;
@@ -132,8 +137,19 @@ nav{
 .footer img:hover{
     cursor:pointer;
     transform: scale(0.4,0.4);
-    
 }
+.explanation div {
+    display: flex;
+    align-items: center;
+}
+.explanation {
+  display: flex;
+    vertical-align: -webkit-baseline-middle;
+}
+.explanation img{
+    width: 20%;
+    height: auto;
+}  
 #shuffle{
     transform: translateY(10px);
     transform: scale(.4,.4);  
