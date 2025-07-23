@@ -78,6 +78,40 @@ function addCard(){
 }
 
 
+document.querySelector("#fileInput").addEventListener('change', handleFileUpload);
+
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const json = JSON.parse(e.target.result);
+            if (!Array.isArray(json) || !json[0]?.title) {
+                alert("Invalid set format.");
+                return;
+            }
+            // Clear existing form/cards
+            cards.forEach(card => form.removeChild(card));
+            cards = [];
+            // Set title
+            title.value = json[0].title;
+            // Add cards
+            for (let i = 1; i < json.length; i++) {
+                const term = Object.keys(json[i])[0];
+                const definition = json[i][term];
+                addCard();
+                terms[i - 1].value = term;
+                definitions[i - 1].value = definition;
+            }
+            updateNums();
+        } catch (err) {
+            console.error("Error reading file:", err);
+            alert("Could not parse the JSON file.");
+        }
+    };
+    reader.readAsText(file);
+}
 
  
 //Submit Function

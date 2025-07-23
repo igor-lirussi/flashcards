@@ -7,38 +7,40 @@ const jsonFiles = [
   'json/set1.json',
 ];
 
-//This function will load the sets onto the homepage from local storage.
-function loadHome(){
-    //load json
+function loadSetsFromFiles() {
+    //load from jsons files given in the code
     jsonFiles.forEach((path, index) => {
         fetch(path)
           .then(response => response.json())
           .then(data => {
             if (!data[0]?.title) {
-              console.warn(`File ${path} ha formato errato.`);
-              return;
+                console.warn(`File ${path} wrong format.`);
+                return;
             }
-
-            // Evita duplicazioni se già caricato
+            //no duplications if it's already in local storage
             const numSets = parseInt(localStorage.getItem('set#') || '0');
             for (let i = 1; i <= numSets; i++) {
-              const set = localStorage.getItem(i);
-              if (set && JSON.stringify(data) === set) {
-                console.log(`Set già caricato: ${data[0].title}`);
-                return;
-              }
+                const set = localStorage.getItem(i);
+                if (set && JSON.stringify(data) === set) {
+                    console.log(`Set already present, skipped: ${data[0].title}`);
+                    return;
+                }
             }
-
             const newSetNumber = numSets + 1;
             localStorage.setItem('set#', newSetNumber);
             localStorage.setItem(newSetNumber, JSON.stringify(data));
-            console.log(`Set ${data[0].title} caricato con successo.`);
-            loadHome(); // aggiorna la lista
+            console.log(`Set ${data[0].title} loaded from remote file.`);
+            loadHome() //async function when json will be responded will refresh home
           })
-          .catch(err => console.error(`Errore caricamento ${path}`, err));
+          .catch(err => console.error(`Error load ${path}`, err));
     });
-    //keep going
+}
+
+//This function will load the sets onto the homepage
+function loadHome(){
+    loadSetsFromFiles()
     const numOfSets = localStorage.getItem('set#');
+    console.log(`Num Sets: ${numOfSets}`);
     if(numOfSets > 0){
         for(let i = 1; i <= numOfSets; i++ ){
             let setData = JSON.parse(localStorage.getItem(i));
@@ -53,10 +55,22 @@ function loadHome(){
             // setEdit.addEventListener('click', () => editSetData(i));
             // setEdit.href = "create.html";
             setDelete.classList.add('setDelete');
-            setDelete.textContent = "X"
-            setDelete.addEventListener('click', () => deleteSet(i, set));
+            setDelete.textContent = " X "
+            setDelete.title = "Delete Set";
+            setDelete.addEventListener('click', () => {
+                if (confirm("You sure to delete this?")) {
+                    deleteSet(i, set);
+                }
+            });
             // setHeader.appendChild(setEdit);
-            setHeader.appendChild(document.createElement('span'));
+            // Create download button
+            let setDownload = document.createElement('span');
+            setDownload.classList.add('setDownload');
+            setDownload.textContent = " ⬇ "; // Unicode download icon 
+            setDownload.title = "Download JSON";
+            setDownload.addEventListener('click', () => downloadSet(i));
+            // Append buttons
+            setHeader.appendChild(setDownload);
             setHeader.appendChild(setDelete);
             setHeader.classList.add('setHeader');
             setLink.classList.add('setLink');
@@ -72,6 +86,27 @@ function loadHome(){
     
         }
     }
+}
+
+function downloadSet(setNumber) {
+    let data = localStorage.getItem(setNumber);
+    if (!data) return;
+    let blob = new Blob([data], { type: "application/json" });
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+    let parsed = JSON.parse(data);
+    let title = parsed[0]?.title?.replace(/[^a-z0-9]/gi, '_').toLowerCase() || `set${setNumber}`;
+    a.download = `${title}.json`;
+    // iOS Safari workaround: open in a new tab if download doesn't work
+    if (navigator.userAgent.match(/iPhone|iPad|iPod/)) {
+        window.open(url, '_blank');
+    } else {
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+    URL.revokeObjectURL(url);
 }
 
 function deleteSet(setNumber, div){

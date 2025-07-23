@@ -107,28 +107,12 @@ h1{
     display: flex;
     justify-content: space-between;
 }
-.setDelete{
+.setDelete, .setDownload{
     position: relative;
+    padding: 0 6px;
     align-self: flex-end;
     top: 5%;
-    right: 10%;
     z-index: 2;
-}
-.setEdit{
-    position: relative;
-    color: white;
-    text-decoration: none;
-    top: 5%;
-    left: 10%;
-    z-index: 2;
-}
-.setEdit:hover{
-    color: lightblue;
-    cursor: pointer;
-}
-.setDelete:hover{
-    color: darkred;
-    cursor: pointer;
 }
 .setLink{
     display: inline-block;
@@ -148,11 +132,27 @@ h1{
     border: 1px gold solid;
     transition: 0.5s;
 }
+.setEdit{
+    position: relative;
+    color: white;
+    text-decoration: none;
+    top: 5%;
+    left: 10%;
+    z-index: 2;
+}
+.setEdit:hover{
+    color: lightblue;
+    cursor: pointer;
+}
+.setDelete:hover, .setDownload:hover{
+    color: darkred;
+    cursor: pointer;
+}
 .setLink:hover{
     transform: scale(1.1);
-    color: darkgoldenrod;
+    color: white;
     border: gold 2px solid;
-    background-color: white;
+    background-color: darkgoldenrod;
 }
 #createBtn:hover{
     transform: scale(1);
